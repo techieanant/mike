@@ -94,7 +94,7 @@ docker compose -f docker-compose.prod.yml --env-file .env.prod up -d
 
 On the **first start only**, the database init scripts run automatically:
 
-1. `backend/migrations/000_one_shot_schema.sql` — creates all app tables and RLS policies
+1. `backend/schema.sql` — creates all app tables and RLS policies
 2. `db/init/30_permissions.sql` — grants PostgREST role permissions
 
 This takes about 30 seconds. Check progress with:

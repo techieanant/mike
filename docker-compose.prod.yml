@@ -30,7 +30,7 @@ services:
       PGPASSWORD: ${POSTGRES_PASSWORD}
     volumes:
       - db_data:/var/lib/postgresql/data/pgdata
-      - ./backend/migrations/000_one_shot_schema.sql:/docker-entrypoint-initdb.d/20_app_schema.sql:ro
+      - ./backend/schema.sql:/docker-entrypoint-initdb.d/20_app_schema.sql:ro
       - ./db/init/30_permissions.sql:/docker-entrypoint-initdb.d/30_permissions.sql:ro
 
   # ── GoTrue — Supabase-compatible auth service ───────────────────────────────

@@ -81,7 +81,7 @@ docker compose down -v
 
 The schema is applied automatically on the **first** container start via Docker's init-script mechanism:
 
-1. `backend/migrations/000_one_shot_schema.sql` → mounted as `/docker-entrypoint-initdb.d/20_app_schema.sql`
+1. `backend/schema.sql` → mounted as `/docker-entrypoint-initdb.d/20_app_schema.sql`
 2. `db/init/30_permissions.sql` → mounted as `/docker-entrypoint-initdb.d/30_permissions.sql`
 
 These scripts run only when the `db_data` volume is empty (i.e., on a fresh start). To re-apply them, remove the volume first:

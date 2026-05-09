@@ -5,8 +5,8 @@ Open-source release containing the Mike frontend and backend.
 ## Contents
 
 - `frontend/` - Next.js application
-- `backend/` - Express API, Supabase access, document processing, and migrations
-- `backend/migrations/000_one_shot_schema.sql` - one-shot schema for fresh databases
+- `backend/` - Express API, Supabase access, document processing, and database schema
+- `backend/schema.sql` - Supabase schema for fresh databases
 
 ## Docker (recommended)
 
@@ -40,7 +40,7 @@ cp backend/.env.example backend/.env
 cp frontend/.env.local.example frontend/.env.local
 ```
 
-Run `backend/migrations/000_one_shot_schema.sql` against your Supabase or self-hosted Postgres instance.
+Run `backend/schema.sql` against your Supabase or self-hosted Postgres instance.
 
 Start the backend:
 
