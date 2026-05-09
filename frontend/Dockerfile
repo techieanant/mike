@@ -2,7 +2,7 @@
 FROM node:22-alpine AS deps
 WORKDIR /app
 COPY package*.json ./
-RUN npm ci
+RUN npm ci --legacy-peer-deps
 
 # ── Build stage ───────────────────────────────────────────────────────────────
 FROM node:22-alpine AS builder

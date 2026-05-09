@@ -29,14 +29,18 @@ services:
     environment:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
       POSTGRES_DB: postgres
-      PGDATA: /var/lib/postgresql/data/pgdata
+      PGDATA: /var/lib/postgresql/data
       # supabase/postgres uses this to set passwords for internal roles
       PGPASSWORD: ${POSTGRES_PASSWORD:-postgres}
     volumes:
-      - db_data:/var/lib/postgresql/data/pgdata
-      # App schema runs after the Supabase internal schema (alphabetical order)
-      - ./backend/schema.sql:/docker-entrypoint-initdb.d/20_app_schema.sql:ro
-      - ./db/init/30_permissions.sql:/docker-entrypoint-initdb.d/30_permissions.sql:ro
+      - db_data:/var/lib/postgresql/data
+      # Init files run in alphabetical order after migrate.sh (m < z).
+      # z0_ prefix ensures auth.jwt() runs after migrate.sh but before za_ app schema.
+      # zz_ suffix ensures the password-fix script runs last.
+      - ./db/init/z0_auth_jwt.sql:/docker-entrypoint-initdb.d/z0_auth_jwt.sql:ro
+      - ./backend/schema.sql:/docker-entrypoint-initdb.d/za_20_app_schema.sql:ro
+      - ./db/init/30_permissions.sql:/docker-entrypoint-initdb.d/zb_30_permissions.sql:ro
+      - ./db/init/zz_fix_role_passwords.sh:/docker-entrypoint-initdb.d/zz_fix_role_passwords.sh
     ports:
       - "5432:5432"
 
@@ -105,7 +109,7 @@ services:
       rest:
         condition: service_started
     healthcheck:
-      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8000/health"]
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://127.0.0.1:8000/health"]
       interval: 10s
       timeout: 5s
       retries: 10
@@ -135,7 +139,7 @@ services:
 
   # ── MinIO bucket initializer ─────────────────────────────────────────────────
   minio-init:
-    image: minio/mc:RELEASE.2024-06-20T17-26-35Z
+    image: minio/mc:RELEASE.2024-05-24T09-08-49Z
     restart: on-failure
     depends_on:
       minio:
