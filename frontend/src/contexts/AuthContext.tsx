@@ -29,15 +29,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     useEffect(() => {
         const checkUser = async () => {
+            // getUser() validates the session against the server, so stale
+            // tokens left in localStorage after a DB wipe are rejected and
+            // the user is signed out rather than incorrectly shown as logged in.
             const {
-                data: { session },
-            } = await supabase.auth.getSession();
+                data: { user },
+                error,
+            } = await supabase.auth.getUser();
 
-            if (session?.user) {
+            if (user && !error) {
                 setUser({
-                    id: session.user.id,
-                    email: session.user.email || "",
+                    id: user.id,
+                    email: user.email || "",
                 });
+            } else {
+                // Invalid or expired session — clear it from storage
+                await supabase.auth.signOut();
+                setUser(null);
             }
             setAuthLoading(false);
         };
