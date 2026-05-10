@@ -25,9 +25,18 @@ jobs:
           - service: backend
             context: ./backend
             image: ghcr.io/techieanant/mike-backend
+            build_args: ""
           - service: frontend
             context: ./frontend
             image: ghcr.io/techieanant/mike-frontend
+            # Placeholder values so `next build` can complete in CI.
+            # NEXT_PUBLIC_* vars are baked in at build time; operators
+            # should rebuild the image with real values for production,
+            # or use the docker-compose setup which passes them as ARGs.
+            build_args: |
+              NEXT_PUBLIC_SUPABASE_URL=http://localhost:8000
+              NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY=placeholder-build-time-key
+              NEXT_PUBLIC_API_BASE_URL=http://localhost:3001
 
     steps:
       - name: Checkout repository
@@ -67,5 +76,6 @@ jobs:
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+          build-args: ${{ matrix.build_args }}
           cache-from: type=gha,scope=${{ matrix.service }}
           cache-to: type=gha,mode=max,scope=${{ matrix.service }}
