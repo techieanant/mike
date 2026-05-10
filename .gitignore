@@ -8,6 +8,7 @@ build
 .env
 .env.*
 !.env.example
+!.env.prod.example
 !.env.local.example
 
 *.log
